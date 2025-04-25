@@ -1,6 +1,7 @@
 package com.challenge.Intuit.service;
 
 
+import com.challenge.Intuit.dto.CustomerDto;
 import com.challenge.Intuit.entity.Customer;
 
 import java.util.List;
@@ -15,11 +16,11 @@ public interface CustomerService {
 
     List<Customer> searchCustomersByName(String name);
 
-    List<Customer> createAllCustomer(List<Customer> customerList);
+    List<Customer> createAllCustomer(List<CustomerDto> customerList);
 
-    Customer createCustomer(Customer customer);
+    Customer createCustomer(CustomerDto customer);
 
-    Customer updateCustomer(Long id, Customer customerDetails);
+    Customer updateCustomer(Long id, CustomerDto customerDetails);
 
     void deleteCustomer(Long id);
 

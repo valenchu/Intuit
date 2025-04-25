@@ -1,8 +1,11 @@
 package com.challenge.Intuit.service;
 
+import com.challenge.Intuit.dto.CustomerDto;
 import com.challenge.Intuit.entity.Customer;
+import com.challenge.Intuit.mapper.CustomerMapper;
 import com.challenge.Intuit.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +14,15 @@ import java.util.Optional;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired
     private CustomerRepository customerRepository;
+
+    private CustomerMapper customerMapper;
+
+    @Autowired
+    public CustomerServiceImpl(CustomerRepository customerRepository, CustomerMapper customerMapper) {
+        this.customerRepository = customerRepository;
+        this.customerMapper = customerMapper;
+    }
 
     @Override
     public List<Customer> getAllCustomers() {
@@ -36,13 +46,23 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer createCustomer(Customer customer) {
-        return customerRepository.save(customer);
+    public Customer createCustomer(CustomerDto customerDto) {
+        Customer customer = customerMapper.toEntity(customerDto);
+        try {
+            return customerRepository.save(customer);
+        }catch (RuntimeException e){
+            throw e;
+        }
     }
 
     @Override
-    public List<Customer> createAllCustomer(List<Customer> customer) {
-        return customerRepository.saveAll(customer);
+    public List<Customer> createAllCustomer(List<CustomerDto> customerDto) {
+        List<Customer> customerList = customerMapper.toEntityList(customerDto);
+        try {
+            return customerRepository.saveAll(customerList);
+        }catch (RuntimeException e){
+            throw e;
+        }
     }
 
     /**
@@ -54,15 +74,9 @@ public class CustomerServiceImpl implements CustomerService {
      * @throws RuntimeException if the customer with the given ID is not found.
      */
     @Override
-    public Customer updateCustomer(Long id, Customer customerDetails) {
+    public Customer updateCustomer(Long id, CustomerDto customerDetails) {
         return customerRepository.findById(id).map(customer -> {
-            customer.setNombres(customerDetails.getNombres());
-            customer.setApellidos(customerDetails.getApellidos());
-            customer.setFechaNacimiento(customerDetails.getFechaNacimiento());
-            customer.setCuit(customerDetails.getCuit());
-            customer.setDomicilio(customerDetails.getDomicilio());
-            customer.setTelefonoCelular(customerDetails.getTelefonoCelular());
-            customer.setEmail(customerDetails.getEmail());
+            customerMapper.updateCustomerFromDto(customerDetails, customer);
             return customerRepository.save(customer);
         }).orElseThrow(() -> new RuntimeException("Customer not found with ID: " + id));
     }

@@ -6,6 +6,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class CustomerMapper {
 	private final ModelMapper modelMapper; // Inyecta ModelMapper
@@ -41,6 +45,44 @@ public class CustomerMapper {
 		Customer entity = modelMapper.map(dto, Customer.class);
 		return entity;
 	}
+
+	/**
+	 * Maps a list of CustomerDto to a list of Customer entities.
+	 * Handles null or empty input list and null elements within the list.
+	 * @param dtoList The source list of CustomerDto. Can be null.
+	 * @return A new list of Customer entities. Returns an empty list if the input list is null or empty.
+	 */
+	public List<Customer> toEntityList(List<CustomerDto> dtoList) {
+		if (dtoList == null || dtoList.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		return dtoList.stream()
+				.filter(dto -> dto != null)
+				.map(this::toEntity)
+				.filter(entity -> entity != null)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Maps a list of Customer entities to a list of CustomerDto.
+	 * Handles null or empty input list and null elements within the list.
+	 * @param entityList The source list of Customer entities. Can be null.
+	 * @return A new list of CustomerDto. Returns an empty list if the input list is null or empty.
+	 */
+	public List<CustomerDto> toDtoList(List<Customer> entityList) {
+		if (entityList == null || entityList.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		return entityList.stream()
+				.filter(entity -> entity != null)
+				.map(this::toDto)
+				.filter(dto -> dto != null)
+				.collect(Collectors.toList());
+	}
+
+
 
 	/**
 	 * Updates an existing Customer entity with data from a CustomerDto.

@@ -15,7 +15,7 @@ public class AuthController {
 	@Autowired
 	private UserRepository userRepository; // Para guardar nuevos usuarios
 
-	@Autowired(required = false)
+	@Autowired
 	private PasswordEncoder passwordEncoder; // Para cifrar contraseñas
 
 //	@Autowired

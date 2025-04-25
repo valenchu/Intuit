@@ -1,5 +1,6 @@
 package com.challenge.Intuit.controller;
 
+import com.challenge.Intuit.dto.CustomerDto;
 import com.challenge.Intuit.entity.Customer;
 import com.challenge.Intuit.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,18 +37,18 @@ public class CustomerController {
 
     @PostMapping("/createAllCustomer")
     @ResponseStatus(HttpStatus.CREATED)
-    public List<Customer> createAllCustomer(@RequestBody List<Customer> customer) {
-        return customerService.createAllCustomer(customer);
+    public List<Customer> createAllCustomer(@RequestBody List<CustomerDto> customerDtos) {
+        return customerService.createAllCustomer(customerDtos);
     }
 
     @PostMapping("/createCustomer")
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer createCustomer(@RequestBody Customer customer) {
-        return customerService.createCustomer(customer);
+    public Customer createCustomer(@RequestBody CustomerDto customerDto) {
+        return customerService.createCustomer(customerDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody Customer customerDetails) {
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody CustomerDto customerDetails) {
         try {
             Customer updatedCustomer = customerService.updateCustomer(id, customerDetails);
             return ResponseEntity.ok(updatedCustomer);
