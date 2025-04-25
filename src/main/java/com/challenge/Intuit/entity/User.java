@@ -22,4 +22,7 @@ public class User {
 
     @Column(nullable = false, length = 255)
     private String password;
+
+    @JsonIgnore
+    private String auth;
 }

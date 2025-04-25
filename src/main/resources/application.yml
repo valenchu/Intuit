@@ -24,3 +24,10 @@ spring:
     console:
       enabled: true
       path: /h2-console # Path para acceder a la consola
+
+  security:
+    basic:
+      enable: false
+  management:
+    security:
+      enabled: false

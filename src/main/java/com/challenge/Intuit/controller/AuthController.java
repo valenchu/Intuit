@@ -6,6 +6,7 @@ import com.challenge.Intuit.security.securitydto.AuthRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,9 +15,9 @@ public class AuthController {
 	@Autowired
 	private UserRepository userRepository; // Para guardar nuevos usuarios
 
-//	@Autowired
-//	private PasswordEncoder passwordEncoder; // Para cifrar contraseñas
-//
+	@Autowired(required = false)
+	private PasswordEncoder passwordEncoder; // Para cifrar contraseñas
+
 //	@Autowired
 //	private AuthenticationManager authenticationManager; // Para autenticar usuarios
 
