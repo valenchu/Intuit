@@ -15,6 +15,8 @@ public interface CustomerService {
 
     List<Customer> searchCustomersByName(String name);
 
+    List<Customer> createAllCustomer(List<Customer> customerList);
+
     Customer createCustomer(Customer customer);
 
     Customer updateCustomer(Long id, Customer customerDetails);
