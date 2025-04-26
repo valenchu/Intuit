@@ -3,7 +3,9 @@ package com.challenge.Intuit.controller;
 import com.challenge.Intuit.dto.CustomerDto;
 import com.challenge.Intuit.entity.Customer;
 import com.challenge.Intuit.service.CustomerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +15,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/customer")
+@RequiredArgsConstructor
 public class CustomerController {
 
-    @Autowired
-    private CustomerService customerService;
+
+    private final CustomerService customerService;
 
     @GetMapping
     public List<Customer> getAllCustomers() {

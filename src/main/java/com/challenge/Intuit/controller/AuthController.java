@@ -3,7 +3,7 @@ package com.challenge.Intuit.controller;
 import com.challenge.Intuit.security.securitydto.AuthLoginDto;
 import com.challenge.Intuit.security.securitydto.AuthRegisterDto;
 import com.challenge.Intuit.security.securitydto.TokenResponseDto;
-import com.challenge.Intuit.service.UserService;
+import com.challenge.Intuit.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,29 +17,30 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 	private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
-	private final UserService userService;
+	private final AuthService authService;
 
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> registerUser(@RequestBody final AuthRegisterDto userRegister) {
-		if (userService.findByEmail(userRegister.email()).isPresent()) {
+		if (authService.findByEmail(userRegister.email()).isPresent()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The email is already registered.");
 		}
-		TokenResponseDto token = userService.createToken(userRegister);
+		TokenResponseDto token = authService.createToken(userRegister);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(token);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticate(@RequestBody final AuthLoginDto user) {
-		TokenResponseDto token = userService.authenticate(user);
+		TokenResponseDto token = authService.authenticate(user);
 
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(token);
 	}
 
 	@PostMapping("/refresh")
 	public ResponseEntity<?> refresToken(@RequestHeader(HttpHeaders.AUTHORIZATION) final String authHeader ) {
-		return null;
+		TokenResponseDto token = authService.refresToken(authHeader);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(token);
 	}
 
 	@PostMapping("/testLoki")

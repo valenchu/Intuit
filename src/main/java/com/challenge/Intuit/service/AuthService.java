@@ -7,7 +7,7 @@ import com.challenge.Intuit.security.securitydto.TokenResponseDto;
 
 import java.util.Optional;
 
-public interface UserService {
+public interface AuthService {
 	Optional<User> findByEmail(String email);
 
 	TokenResponseDto createToken(AuthRegisterDto authRegisterDto);

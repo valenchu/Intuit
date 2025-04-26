@@ -1,6 +1,7 @@
 package com.challenge.Intuit.service;
 
 import com.challenge.Intuit.entity.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -42,5 +43,32 @@ public class JwtService {
 	private SecretKey getSecretKey() {
 		byte[] keyByte = Decoders.BASE64.decode(this.secretK);
 		return Keys.hmacShaKeyFor(keyByte);
+	}
+
+	private Claims getPayload(String token) {
+		return Jwts.parser()
+				   .verifyWith(getSecretKey())
+				   .build()
+				   .parseSignedClaims(token)
+				   .getPayload();
+	}
+
+	public String extractEmail(String token) {
+		final Claims claimsToken = getPayload(token);
+		return claimsToken.getSubject();
+	}
+
+	private Date extractExpiration(String token) {
+		final Claims claimsToken = getPayload(token);
+		return claimsToken.getExpiration();
+	}
+
+	public boolean isValidToken(String token, User user) {
+		final String userEmail = this.extractEmail(token);
+		return  (userEmail.equals(user.getEmail())) && !this.isTokenExpired(token);
+	}
+
+	private boolean isTokenExpired(String token) {
+		return this.extractExpiration(token).before(new Date());
 	}
 }

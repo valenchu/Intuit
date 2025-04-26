@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class AuthServiceImpl implements AuthService {
 	private final TokenRepository tokenRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final UserRepository userRepository;
@@ -97,7 +97,12 @@ public class UserServiceImpl implements UserService {
 		}
 		final User user = userRepository.findByEmail(userEmail)
 										.orElseThrow(() -> new UsernameNotFoundException("Invalid email " + userEmail));
-		
-		return null;
+		if(!jwtService.isValidToken(refreshToken, user)){
+			throw new IllegalArgumentException("Invalid Refresh token");
+		}
+		final String accessToken = jwtService.generatedToken(user);
+		revokeAllUserTokens(user);
+		saveUserToken(user, accessToken);
+		return new TokenResponseDto(accessToken, refreshToken);
 	}
 }

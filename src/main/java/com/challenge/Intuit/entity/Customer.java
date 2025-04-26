@@ -18,11 +18,11 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombres", nullable = false)
-    private String nombres;
+    @Column(name = "nombre", nullable = false)
+    private String nombre;
 
-    @Column(name = "apellidos", nullable = false)
-    private String apellidos;
+    @Column(name = "apellido", nullable = false)
+    private String apellido;
 
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
