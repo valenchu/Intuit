@@ -10,10 +10,12 @@ import com.challenge.Intuit.security.securitydto.TokenResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -61,8 +63,8 @@ public class UserServiceImpl implements UserService {
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authLoginDto.email(),
 				authLoginDto.password()));
 		var user = userRepository.findByEmail(authLoginDto.email())
-								 .orElseThrow(() -> new RuntimeException(
-										 "Error to find email in UserServiceImpl authenticate()"));
+								 .orElseThrow(() -> new RuntimeException("Error to find email in UserServiceImpl " +
+										 "authenticate()"));
 		var jwtToken = jwtService.generatedToken(user);
 		var refreshToken = jwtService.generatedRefreshToken(user);
 		revokeAllUserTokens(user);
@@ -83,7 +85,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public TokenResponseDto refresToken(String string) {
+	public TokenResponseDto refresToken(final String authenticate) {
+		if (Objects.isNull(authenticate) || !authenticate.startsWith("Bearer ")) {
+			throw new IllegalArgumentException("Invalid Bearer token");
+		}
+		final String refreshToken = authenticate.substring(7);
+		final String userEmail = jwtService.extractEmail(refreshToken);
+
+		if (Objects.isNull(userEmail)) {
+			throw new IllegalArgumentException("Invalid Refresh token");
+		}
+		final User user = userRepository.findByEmail(userEmail)
+										.orElseThrow(() -> new UsernameNotFoundException("Invalid email " + userEmail));
+		
 		return null;
 	}
 }
