@@ -1,44 +1,46 @@
 package com.challenge.Intuit.controller;
 
-import com.challenge.Intuit.entity.User;
 import com.challenge.Intuit.security.securitydto.AuthLoginDto;
 import com.challenge.Intuit.security.securitydto.AuthRegisterDto;
 import com.challenge.Intuit.security.securitydto.TokenResponseDto;
-import com.challenge.Intuit.service.UserService;
+import com.challenge.Intuit.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 	private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	@Autowired
-	private UserService userServiceImpl;
+	private final AuthService authService;
 
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> registerUser(@RequestBody final AuthRegisterDto userRegister) {
-		if (userServiceImpl.findByEmail(userRegister.getEmail()).isPresent()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El email ya está registrado.");
+		if (authService.findByEmail(userRegister.email()).isPresent()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The email is already registered.");
 		}
-		userRegister.setPassword(passwordEncoder.encode(userRegister.getPassword()));
-//		TokenResponseDto token = userServiceImpl.createToken(userRegister);
+		TokenResponseDto token = authService.createToken(userRegister);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body("token");
+		return ResponseEntity.status(HttpStatus.CREATED).body(token);
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> authenticate(@RequestBody AuthLoginDto user) {
+	public ResponseEntity<?> authenticate(@RequestBody final AuthLoginDto user) {
+		TokenResponseDto token = authService.authenticate(user);
 
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(token);
+	}
 
-		return null;
+	@PostMapping("/refresh")
+	public ResponseEntity<?> refresToken(@RequestHeader(HttpHeaders.AUTHORIZATION) final String authHeader ) {
+		TokenResponseDto token = authService.refresToken(authHeader);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(token);
 	}
 
 	@PostMapping("/testLoki")

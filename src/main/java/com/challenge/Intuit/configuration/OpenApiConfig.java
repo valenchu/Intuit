@@ -10,26 +10,26 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
-//	private static final String SECURITY_SCHEME_NAME = "bearerAuth";
-//
-//	@Bean
-//	public OpenAPI customOpenAPI() {
-//		return new OpenAPI()
-//				.info(new Info()
-//						.title("Customer Management API")
-//						.version("1.0")
-//						.description("REST API for customer management with Spring Boot and JWT.")
-//				).components(new Components()
-//						.addSecuritySchemes(SECURITY_SCHEME_NAME,
-//								new SecurityScheme()
-//										.name(SECURITY_SCHEME_NAME)
-//										.type(SecurityScheme.Type.HTTP)
-//										.scheme("bearer")
-//										.bearerFormat("JWT")
-//										.description("Enter the JWT token with the Bearer prefix. Example: 'Bearer " +
-//												"abcde12345'")
-//						)
-//				).addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME));
-//
-//	}
+	private static final String SECURITY_SCHEME_NAME = "bearerAuth";
+
+	@Bean
+	public OpenAPI customOpenAPI() {
+		return new OpenAPI()
+				.info(new Info()
+						.title("Customer Management API")
+						.version("1.0")
+						.description("REST API for customer management with Spring Boot and JWT.")
+				).components(new Components()
+						.addSecuritySchemes(SECURITY_SCHEME_NAME,
+								new SecurityScheme()
+										.name(SECURITY_SCHEME_NAME)
+										.type(SecurityScheme.Type.HTTP)
+										.scheme("bearer")
+										.bearerFormat("JWT")
+										.description("Enter the JWT token with the Bearer prefix. Example: 'Bearer " +
+												"abcde12345'")
+						)
+				).addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME));
+
+	}
 }
