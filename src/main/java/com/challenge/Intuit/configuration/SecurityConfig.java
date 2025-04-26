@@ -37,7 +37,7 @@ public class SecurityConfig {
 				.sessionManagement(sessionManagement ->
 						sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				);
-
+		http.headers(AbstractHttpConfigurer::disable);
 		return http.build();
 	}
 
