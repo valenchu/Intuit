@@ -32,7 +32,9 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticate(@RequestBody final AuthLoginDto user) {
-		return null;
+		TokenResponseDto token = userService.authenticate(user);
+
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(token);
 	}
 
 	@PostMapping("/refresh")
