@@ -1,0 +1,67 @@
+
+services:
+#execute compose with docker compose up --build -d
+  springboot-app:
+    # El contexto de construcción sigue siendo la carpeta raíz de tu proyecto Java
+    build: ./
+    # Docker Compose buscará el Dockerfile dentro de ./Intuit
+    ports:
+      - "8080:8080"
+    networks:
+      - my-monitoring-network
+    restart: on-failure
+    environment:
+      - secret="qtraeWveUqqsFHnEHyyBbhYQZnHX5Xc6E636zBPkmKq+YMaFLKOLxPoIaj28un7/a6r1Vn56Tuh9"
+
+  loki:
+    image: grafana/loki:2.9.0
+    ports: #http://host.docker.internal:3100 usar para loki grafana
+      - "3100:3100"
+    volumes:
+      - ./Intuit/src/main/resources/lokiconfig.yaml:/etc/loki/lokiconfig.yaml
+    command: -config.file=/etc/loki/lokiconfig.yaml
+    networks:
+      - my-monitoring-network
+    restart: on-failure
+
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - my-monitoring-network
+    depends_on:
+      - loki
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy
+          orgId: 1
+          url: http://loki:3100 
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    restart: on-failure
+
+networks:
+  my-monitoring-network:
+    driver: bridge
+
+volumes:
+  grafana_data:

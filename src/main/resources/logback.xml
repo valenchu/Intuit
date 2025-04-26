@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <logger name="org.jboss.logging" level="INFO"/>
+    <springProfile name="loki">
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>http://loki:3100/loki/api/v1/push</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=${name},host=${HOSTNAME},level=%level</pattern>
+                <readMarkers>true</readMarkers>
+            </label>
+            <message>
+                <pattern>
+                    [%thread] %-5level %logger{36} [%X{X-Request-ID}] - %msg
+                </pattern>
+            </message>
+        </format>
+    </appender>
+    </springProfile>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <springProfile name="loki">
+            <appender-ref ref="LOKI"/>
+        </springProfile>
+    </root>
+</configuration>

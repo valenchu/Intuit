@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -13,7 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class User {
     @Id
-    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -23,6 +24,7 @@ public class User {
     @Column(nullable = false, length = 255)
     private String password;
 
-    @JsonIgnore
-    private String auth;
+    private String rol;
+    @OneToMany(mappedBy = "user")
+    private List<Token> auth;
 }
