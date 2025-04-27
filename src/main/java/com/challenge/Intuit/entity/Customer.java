@@ -1,5 +1,6 @@
 package com.challenge.Intuit.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,9 +26,10 @@ public class Customer {
     private String apellido;
 
     @Column(name = "fecha_nacimiento")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate fechaNacimiento;
 
-    @Column(name = "cuit", unique = true)
+    @Column(name = "cuit")
     private String cuit;
 
     @Column(name = "domicilio")
@@ -36,7 +38,7 @@ public class Customer {
     @Column(name = "telefono_celular")
     private String telefonoCelular;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email")
     private String email;
 
 }

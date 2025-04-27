@@ -47,4 +47,4 @@ COPY --from=builder /app/build/libs/*.jar /app/app.jar
 EXPOSE 8080
 
 # Define el punto de entrada para ejecutar la aplicación Java
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "-web -webAllowOthers -tcp -tcpAllowOthers -browser"]
