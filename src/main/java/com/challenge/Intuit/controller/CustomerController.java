@@ -3,9 +3,8 @@ package com.challenge.Intuit.controller;
 import com.challenge.Intuit.dto.CustomerDto;
 import com.challenge.Intuit.entity.Customer;
 import com.challenge.Intuit.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,18 +39,20 @@ public class CustomerController {
 
     @PostMapping("/createAllCustomer")
     @ResponseStatus(HttpStatus.CREATED)
-    public List<Customer> createAllCustomer(@RequestBody List<CustomerDto> customerDtos) {
+    public List<Customer> createAllCustomer(@Valid @RequestBody List<CustomerDto> customerDtos) {
         return customerService.createAllCustomer(customerDtos);
     }
 
     @PostMapping("/createCustomer")
+
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer createCustomer(@RequestBody CustomerDto customerDto) {
+    public Customer createCustomer(@Valid @RequestBody CustomerDto customerDto) {
         return customerService.createCustomer(customerDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody CustomerDto customerDetails) {
+    public ResponseEntity<Customer> updateCustomer(@Valid @PathVariable Long id,
+                                                   @RequestBody CustomerDto customerDetails) {
         try {
             Customer updatedCustomer = customerService.updateCustomer(id, customerDetails);
             return ResponseEntity.ok(updatedCustomer);

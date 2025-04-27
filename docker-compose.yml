@@ -7,18 +7,20 @@ services:
     # Docker Compose buscará el Dockerfile dentro de ./Intuit
     ports:
       - "8080:8080"
+    expose:
+      - "8080"
     networks:
       - my-monitoring-network
     restart: on-failure
     environment:
-      - secret="qtraeWveUqqsFHnEHyyBbhYQZnHX5Xc6E636zBPkmKq+YMaFLKOLxPoIaj28un7/a6r1Vn56Tuh9"
+     SECRET_KEY: "qtraeWveUqqsFHnEHyyBbhYQZnHX5Xc6E636zBPkmKq+YMaFLKOLxPoIaj28un7/a6r1Vn56Tuh9"
 
   loki:
     image: grafana/loki:2.9.0
     ports: #http://host.docker.internal:3100 usar para loki grafana
       - "3100:3100"
     volumes:
-      - ./Intuit/src/main/resources/lokiconfig.yaml:/etc/loki/lokiconfig.yaml
+      - ./src/main/resources/lokiconfig.yaml:/etc/loki/lokiconfig.yaml
     command: -config.file=/etc/loki/lokiconfig.yaml
     networks:
       - my-monitoring-network

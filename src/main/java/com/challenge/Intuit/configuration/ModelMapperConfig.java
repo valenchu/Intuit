@@ -24,19 +24,25 @@ public class ModelMapperConfig {
          * Use  setSkipNullEnabled(true) or setSkipNulls(true) depending on the version.
          * This tells ModelMapper to ignore null values during the mapping process.
          */
-        modelMapper.getConfiguration().setSkipNullEnabled(true);
-        Converter<String, String> emptyStringConverter = ctx ->
-                ctx.getSource() == null ? "" : ctx.getSource();
-        //Schee for customer mapper
-        modelMapper.createTypeMap(CustomerDto.class, Customer.class)
-                   .addMappings(mapper -> {
-                       mapper.using(emptyStringConverter).map(CustomerDto::getNombre, Customer::setNombre);
-                       mapper.using(emptyStringConverter).map(CustomerDto::getApellido, Customer::setApellido);
-                       mapper.using(emptyStringConverter).map(CustomerDto::getCuit, Customer::setCuit);
-                       mapper.using(emptyStringConverter).map(CustomerDto::getDomicilio, Customer::setDomicilio);
-                       mapper.using(emptyStringConverter).map(CustomerDto::getTelefonoCelular, Customer::setTelefonoCelular);
-                       mapper.using(emptyStringConverter).map(CustomerDto::getEmail, Customer::setEmail);
-                   });
+        try {
+
+            modelMapper.getConfiguration().setSkipNullEnabled(true);
+            Converter<String, String> emptyStringConverter = ctx ->
+                    ctx.getSource() == null ? "" : ctx.getSource();
+            //Schee for customer mapper
+            modelMapper.createTypeMap(CustomerDto.class, Customer.class)
+                       .addMappings(mapper -> {
+                           mapper.using(emptyStringConverter).map(CustomerDto::getNombre, Customer::setNombre);
+                           mapper.using(emptyStringConverter).map(CustomerDto::getApellido, Customer::setApellido);
+                           mapper.using(emptyStringConverter).map(CustomerDto::getCuit, Customer::setCuit);
+                           mapper.using(emptyStringConverter).map(CustomerDto::getDomicilio, Customer::setDomicilio);
+                           mapper.using(emptyStringConverter).map(CustomerDto::getTelefonoCelular, Customer::setTelefonoCelular);
+                           mapper.using(emptyStringConverter).map(CustomerDto::getEmail, Customer::setEmail);
+                       });
+        }catch (RuntimeException exception){
+            throw new RuntimeException("Error to map customer");
+        }
+
         return modelMapper;
     }
 }

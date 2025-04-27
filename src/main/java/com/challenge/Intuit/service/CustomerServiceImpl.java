@@ -4,11 +4,11 @@ import com.challenge.Intuit.dto.CustomerDto;
 import com.challenge.Intuit.entity.Customer;
 import com.challenge.Intuit.mapper.CustomerMapper;
 import com.challenge.Intuit.repository.CustomerRepository;
+import com.challenge.Intuit.utilValidate.UtilValidate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -41,13 +41,19 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Override
     public List<Customer> searchCustomersByName(String name) {
-        return customerRepository.findByNombreContainingIgnoreCase(name);
+		List<Customer> list = new LinkedList<>(customerRepository.findByNombreContainingIgnoreCase(name));
+        if(list.isEmpty()){
+            throw new RuntimeException("Not found name");
+        }
+        return list;
     }
 
     @Override
     public Customer createCustomer(CustomerDto customerDto) {
-        Customer customer = customerMapper.toEntity(customerDto);
         try {
+            UtilValidate.validateData(customerDto);
+
+            Customer customer = customerMapper.toEntity(customerDto);
             return customerRepository.save(customer);
         }catch (RuntimeException e){
             throw e;
@@ -56,9 +62,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Customer> createAllCustomer(List<CustomerDto> customerDto) {
-        List<Customer> customerList = customerMapper.toEntityList(customerDto);
+
         try {
-            return customerRepository.saveAll(customerList);
+            customerDto.forEach(UtilValidate::validateData);
+            List<Customer> customerList = customerMapper.toEntityList(customerDto);
+            final List<Customer> listToReturn = new ArrayList<>();
+            customerList.forEach(customer -> listToReturn.add(customerRepository.save(customer)));
+            return listToReturn;
         }catch (RuntimeException e){
             throw e;
         }
@@ -74,6 +84,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Override
     public Customer updateCustomer(Long id, CustomerDto customerDetails) {
+        UtilValidate.validateData(customerDetails);
         return customerRepository.findById(id).map(customer -> {
             customerMapper.updateCustomerFromDto(customerDetails, customer);
             return customerRepository.save(customer);
